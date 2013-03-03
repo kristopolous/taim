@@ -84,16 +84,14 @@ const char*g_commands[]=
 	"quit"
 };
 
-typedef struct _taim_pipe
-{
+typedef struct _taim_pipe {
 	char 	user[32],
 		data[PIPE_BUFFER];
 
 	struct _taim_pipe *next;
-}taim_pipe;
+} taim_pipe;
 
-typedef struct _taim_buddy
-{
+typedef struct _taim_buddy {
 	char	*name;
 
 	int 	last,
@@ -103,17 +101,16 @@ typedef struct _taim_buddy
 		*left,
 		*right,
 		*parent;
-}taim_buddy;
+} taim_buddy;
 
-typedef struct _taim_buddy_rank
-{
+
+typedef struct _taim_buddy_rank {
 	taim_buddy*buddy;
 	struct _taim_buddy_rank*next;
 	struct _taim_buddy_rank*prev;
-}taim_buddy_rank;
+} taim_buddy_rank;
 
-typedef struct _taim_session_entry
-{
+typedef struct _taim_session_entry {
 	struct _taim_account *account;
 
 	taim_pipe 	*cpipe, 
@@ -129,8 +126,7 @@ typedef struct _taim_session_entry
 
 } taim_session_entry;
 
-typedef struct _taim_session
-{
+typedef struct _taim_session {
 	char *uid;
 	taim_session_entry *pses;
 	struct _taim_session *next;
@@ -138,8 +134,7 @@ typedef struct _taim_session
 } taim_session;
 
 
-struct _taim_account
-{
+struct _taim_account {
 	PurpleAccount *account;
 	// SHA-1
 	char hash[20],
@@ -172,9 +167,10 @@ typedef struct _taim_account taim_account;
 
 typedef struct _client_struct
 {
-	int 	client,
+	int
+    client,
 		thread;
-}client_struct;
+} client_struct;
 
 typedef struct _PurpleGLibIOClosure 
 {
@@ -249,8 +245,7 @@ void shellout(char*command, char*ret, int size)
 	return;
 }
 
-void debug(char*in, int size)
-{
+void debug(char*in, int size) {
 	int ix = 0;
 
 	taim_session *temp;
@@ -263,33 +258,26 @@ void debug(char*in, int size)
 	{
 		snprintf(in + strlen(in), size - strlen(in), "%u: ", ix);
 
-		if(temp->uid != NULL)
-		{
+		if(temp->uid != NULL) {
 			snprintf(in + strlen(in), size - strlen(in), "[%s]", 
 				temp->uid);
 
-			if(temp->pses != NULL)
-			{
+			if(temp->pses != NULL) {
 				snprintf(in + strlen(in), size - strlen(in), "(0x%X)", (unsigned int)temp->pses);
 
-				if(temp->pses->account != NULL)
-				{
+				if(temp->pses->account != NULL) {
 					snprintf(in + strlen(in), size - strlen(in), "{%s@%s}",
 						temp->pses->account->account ? temp->pses->account->account->username : "(null)",
 						temp->pses->account->password_try);
-				}
-				else
-				{
+
+				} else {
 					snprintf(in + strlen(in), size - strlen(in), "{(null)@(null)}");
 				}
-			}
-			else
-			{
+
+			} else {
 				snprintf(in + strlen(in), size - strlen(in), "(null)");
 			}
-		}
-		else
-		{
+		} else {
 			snprintf(in + strlen(in), size - strlen(in), "(null)");
 		}
 
@@ -299,14 +287,12 @@ void debug(char*in, int size)
 	}
 }
 
-void buddy_ret_clear(taim_session *ses)
-{
+void buddy_ret_clear(taim_session *ses) {
 	int ix;
 
 	d("buddy_ret_clear");
 
-	for(ix = 0;ix < MAX_USERS_TO_SHOW;ix++)
-	{
+	for(ix = 0;ix < MAX_USERS_TO_SHOW;ix++) {
 		memset(ses->pses->blist_toshow_chat[ix], 0, PIPE_BUFFER);
 		ses->pses->blist_toshow_buddy[ix] = 0;
 	}
@@ -316,17 +302,16 @@ void buddy_ret_clear(taim_session *ses)
 	return;
 }
 
-int buddy_ret_print(taim_session *ses, char *buffer)
-{
+int buddy_ret_print(taim_session *ses, char *buffer) {
 	int ix;
 
-	for(ix = 0;ix < ses->pses->blist_size_current;ix++)
-	{
+	for(ix = 0;ix < ses->pses->blist_size_current;ix++) {
 		d("buddy_ret_print_entry");
-		if(!ses->pses->blist_toshow_chat[ix][0])
-		{
-			if(ses->pses->blist_toshow_buddy[ix]->name)
-			{
+
+		if(!ses->pses->blist_toshow_chat[ix][0]) {
+
+			if(ses->pses->blist_toshow_buddy[ix]->name) {
+
 				snprintf(
 					buffer + strlen(buffer), 
 					BUFFER_SIZE - strlen(buffer),
@@ -335,13 +320,11 @@ int buddy_ret_print(taim_session *ses, char *buffer)
 					ses->pses->blist_toshow_buddy[ix]->name
 					);
 			}
-		}
-		else
-		{
+
+		} else {
 			d("chat");
 
-			if(ses->pses->blist_toshow_buddy[ix]->name)
-			{
+			if(ses->pses->blist_toshow_buddy[ix]->name) {
 				snprintf(
 					buffer + strlen(buffer), 
 					BUFFER_SIZE - strlen(buffer),
@@ -357,22 +340,19 @@ int buddy_ret_print(taim_session *ses, char *buffer)
 	return RET_SUCCESS;
 }
 
-int buddy_ret_add(taim_session *ses, taim_buddy *to_show, char *buffer, int size)
-{
+int buddy_ret_add(taim_session *ses, taim_buddy *to_show, char *buffer, int size) {
 	int ix;
 	char *p;
 
-	for(ix = 0;ix < MAX_USERS_TO_SHOW && ix < ses->pses->blist_size_current;ix++)
-	{
-		if(ses->pses->blist_toshow_buddy[ix] == to_show)
-		{
+	for(ix = 0;ix < MAX_USERS_TO_SHOW && ix < ses->pses->blist_size_current;ix++) {
+
+		if(ses->pses->blist_toshow_buddy[ix] == to_show) {
 			d("found buddy");
 			break;
 		}
 	}
 
-	if(size != 0)
-	{
+	if(size != 0) {
 		p = ses->pses->blist_toshow_chat[ix];
 		snprintf(p + strlen(p), PIPE_BUFFER - strlen(p), "%s", buffer);
 	}
@@ -407,73 +387,66 @@ void buddy_get_list(taim_session *ses)
 	}
 
 	// derank if necessary
-	if(ses->pses->account->blist_active)
-	{
+	if(ses->pses->account->blist_active) {
 		for(pprev = ptemp = ses->pses->account->blist_active;
 				ptemp->buddy;
 				ptemp = ptemp->next)
 		{
-			if(ptemp->buddy->last > 0)
-			{
+			if(ptemp->buddy->last > 0) {
+
 				d("Adding active");
 				// Decrement the "last" counter signifying the last time we saw them
 				ptemp->buddy->last--;
-				if(count > 0)
-				{
+
+				if(count > 0) {
 					count = buddy_ret_add(ses, ptemp->buddy, 0, 0);
 				}
-			}
-			else
-			{
-				if(pprev == ses->pses->account->blist_active)
-				{
-					if(pprev->next != NULL)
-					{
+
+			} else {
+
+				if(pprev == ses->pses->account->blist_active) {
+					if(pprev->next != NULL) {
 						ses->pses->account->blist_active = pprev->next;
 					}
-				}
-				else
-				{
+				} else {
 					pprev->next = ptemp->next;
 				}
-				if(ptemp != ses->pses->account->blist_active)
-				{
+
+				if(ptemp != ses->pses->account->blist_active) {
 					free(ptemp);
 				}
+
 				ptemp = pprev;
 			}
 			pprev = ptemp;
 		}
 	}
 
-	if(ses->pses->account->blist_faves)
-	{
+	if(ses->pses->account->blist_faves) {
 		for(pprev = ptemp = ses->pses->account->blist_faves;
 				ptemp->buddy;
 				ptemp = ptemp->next)
 		{
 			d("+popular");
-			if(count > 0)
-			{
+
+			if(count > 0) {
 				count = buddy_ret_add(ses, ptemp->buddy, 0, 0);
-			}
-			else
-			{
+
+			} else {
 				break;
 			}
 		}
 	}
 	
-	if(count > 0)
-	{
+	if(count > 0) {
 		buddy_get_tree(ses, &ses->pses->account->blist);
 	}
 
 	d("exiting");
 }
 
-void buddy_set_active(taim_session*ses,taim_buddy*buddy)
-{
+void buddy_set_active(taim_session*ses,taim_buddy*buddy) {
+
 	taim_buddy_rank *ptemp,
 			*ptemp1,
 			*ptemp2,
@@ -497,22 +470,20 @@ void buddy_set_active(taim_session*ses,taim_buddy*buddy)
 					ptemp1 = ptemp1->prev)
 				{
 					// insert - ha...ha...ha...this so won't work
-					if(ptemp1->buddy->rank >= buddy->rank)
-					{
-						if(ptemp1->next != NULL)
-						{
+					if(ptemp1->buddy->rank >= buddy->rank) {
+
+						if(ptemp1->next != NULL) {
 							ptemp1->next->prev = ptemp;
 						}
+
 						ptemp2 = ptemp1->next;
 						ptemp1->next = ptemp;
 
-						if(ptemp->next != NULL)
-						{
+						if(ptemp->next != NULL) {
 							ptemp->next->prev = ptemp->prev;
 						}
 
-						if(ptemp->prev != NULL)
-						{
+						if(ptemp->prev != NULL) {
 							ptemp->prev->next = ptemp->next;
 						}
 
@@ -527,8 +498,8 @@ void buddy_set_active(taim_session*ses,taim_buddy*buddy)
 		}
 		pprev = ptemp;
 	}
-	if(ptemp->buddy == 0)
-	{
+
+	if(ptemp->buddy == 0) {
 		ptemp->buddy = buddy;
 		ptemp->next = (taim_buddy_rank*)malloc(sizeof(taim_buddy_rank));
 		ptemp = ptemp->next;
@@ -540,11 +511,11 @@ void buddy_set_active(taim_session*ses,taim_buddy*buddy)
 		ptemp->buddy;
 		ptemp = ptemp->next)
 	{
-		if(ptemp->buddy == buddy)
-		{
+		if(ptemp->buddy == buddy) {
 			return;
 		}
 	}
+
 	ptemp->buddy = buddy;
 	ptemp->next = (taim_buddy_rank*)malloc(sizeof(taim_buddy_rank));
 	ptemp = ptemp->next;
@@ -554,27 +525,24 @@ void buddy_set_active(taim_session*ses,taim_buddy*buddy)
 
 // This is just to iterate through the list...
 // It's slow but it should work fine
-void buddy_get_tree(taim_session *ses,taim_buddy *pbuddy)
-{
-	if(pbuddy->left != NULL)
-	{
+void buddy_get_tree(taim_session *ses,taim_buddy *pbuddy) {
+
+	if(pbuddy->left != NULL) {
 		buddy_get_tree(ses, pbuddy->left);
 	}
 
 	d("+any");
 
-	if(buddy_ret_add(ses, pbuddy, 0, 0) == 0)
-	{
+	if(buddy_ret_add(ses, pbuddy, 0, 0) == 0) {
 		return;
 	}
-	if(pbuddy->right != NULL)
-	{
+
+	if(pbuddy->right != NULL) {
 		buddy_get_tree(ses, pbuddy->right);
 	}
 }
 
-taim_buddy* buddy_get(taim_session* pses,char* pbuddy)
-{
+taim_buddy* buddy_get(taim_session* pses,char* pbuddy) {
 	taim_buddy *ptemp;
 
 	int res;
@@ -588,62 +556,52 @@ taim_buddy* buddy_get(taim_session* pses,char* pbuddy)
 
 	lowercase(pbuddy);
 
-	if(pses->pses->account->account && pbuddy)
-	{
-		if(strlen(pses->pses->account->account->username) == strlen(pbuddy))
-		{
-			if(!strcmp(pses->pses->account->account->username, pbuddy))
-			{
+	if(pses->pses->account->account && pbuddy) {
+
+		if(strlen(pses->pses->account->account->username) == strlen(pbuddy)) {
+
+			if(!strcmp(pses->pses->account->account->username, pbuddy)) {
 				return NULL;
 			}
 		}
 	}
 
 	d("+buddy");
-	for(;;)
-	{
-		if(!ptemp)
-		{
+
+	for(;;) {
+		if(!ptemp) {
 			return 0;
 		}
-		if(ptemp->name != NULL)
-		{
+
+		if(ptemp->name != NULL) {
 			res = strcmp(ptemp->name, pbuddy);
-			if(res == 0)
-			{
+			if(res == 0) {
 				return(ptemp);
-			}
-			else if(res > 0)
-			{
-				if(ptemp->left != NULL)
-				{
+
+			} else if(res > 0) {
+
+				if(ptemp->left != NULL) {
 					ptemp = ptemp->left;
-				}
-				else
-				{
+
+				} else {
 					ptemp->left = (taim_buddy*)malloc(sizeof(taim_buddy));
 					ptemp->left->parent = ptemp;
 					ptemp = ptemp->left;
 					break;
 				}
-			}
-			else
-			{
-				if(ptemp->right != NULL)
-				{ 
+			} else {
+
+				if(ptemp->right != NULL) { 
 					ptemp = ptemp->right;
-				}
-				else
-				{
+
+				} else {
 					ptemp->right = (taim_buddy*)malloc(sizeof(taim_buddy));
 					ptemp->right->parent = ptemp;
 					ptemp = ptemp->right;
 					break;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			break;
 		}
 	}
@@ -658,56 +616,50 @@ taim_buddy* buddy_get(taim_session* pses,char* pbuddy)
 	return(ptemp);
 }
 
-taim_session *uid_find_account(PurpleAccount *account)
-{
+taim_session *uid_find_account(PurpleAccount *account) {
 	taim_session	*ptemp;
 
-	if(account == 0)
-	{
+	if(account == 0) {
 		return 0;
 	}
 
 	//d(account);
-	for(ptemp = g_session; ptemp; ptemp = ptemp->next)
-	{
+	for(ptemp = g_session; ptemp; ptemp = ptemp->next) {
 		printf(".");
-		if(!ptemp->uid)
-		{
+		if(!ptemp->uid) {
 			break;
 		}
-		if(ptemp->pses->account->account == account)
-		{
+
+		if(ptemp->pses->account->account == account) {
 			printf(">");
 			return ptemp;
 		}
 	}
+
 	printf(">");
 	return NULL;
 }
 
-taim_session *uid_find(char *uid)
-{
+taim_session *uid_find(char *uid) {
 	taim_session	*ptemp;
 
-	if(uid == 0)
-	{
+	if(uid == 0) {
 		return 0;
 	}
 
-	for(ptemp = g_session; ptemp; ptemp = ptemp->next)
-	{
-		if(!ptemp->uid)
-		{
+	for(ptemp = g_session; ptemp; ptemp = ptemp->next) {
+
+		if(!ptemp->uid) {
 			break;
 		}
-		if(strlen(ptemp->uid) == strlen(uid))
-		{
-			if(!memcmp(ptemp->uid, uid, strlen(uid)))
-			{
+
+		if(strlen(ptemp->uid) == strlen(uid)) {
+			if(!memcmp(ptemp->uid, uid, strlen(uid))) {
 				return ptemp;
 			}
 		}
 	}
+
 	return uid_addsession(uid);
 }
 
@@ -739,8 +691,7 @@ void uid_dump(char *uid)
 	return;
 }
 
-taim_session*uid_addsession(char*uid)
-{
+taim_session*uid_addsession(char*uid) {
 	taim_session *ptemp,
 		     *pprev = g_session;
 
@@ -837,19 +788,17 @@ void *client_chat(void*in)
 
 	// Find the uid structure
 	pses = uid_find(uid);
-	if(pses != NULL)
-	{
-		if(ret == RET_DATA)
-		{
+	if(pses != NULL) {
+
+		if(ret == RET_DATA) {
 			// clear the outgoing buffers
 			buddy_ret_clear(pses);
 
 			// lock the pipe mutex and fill the pipe
 			pthread_mutex_lock(&pses->pses->pipe_mutex);
-			for(;;)
-			{
-				if(pses->pses->cpipe->next == 0)
-				{
+			for(;;) {
+
+				if(pses->pses->cpipe->next == 0) {
 					break;
 				}
 
@@ -941,22 +890,22 @@ void *taim_server(void*stupid)
 
 	getsockname(server, &addr, &addrlen);
 	listen(server, 10);
-	for(;;)
-	{
+	for(;;) {
+
 		client = accept(server,0,0);
-		if(client == -1)
-		{
-			if (g_die)
-			{
+		if(client == -1) {
+
+			if (g_die) {
 				break;
 			}
+
 			continue;
 		}
+
 		handle_register(client);
-		for(ix = 0; ix < MAX_CONNECT; ix++)
-		{
-			if(g_client_inuse[ix] == 0)
-			{
+		for(ix = 0; ix < MAX_CONNECT; ix++) {
+
+			if(g_client_inuse[ix] == 0) {
 				client_struct toPass;
 
 				toPass.client = client;
@@ -1016,21 +965,16 @@ taim_account* taim_conv_add(const char*name, PurpleConversation*conv)
 	taim_account *p_acct = 0;
 
 	// Look for the account
-	for(p_acct = &g_acct_head; p_acct; p_acct = p_acct->next)
-	{	
-		if(conv->account == p_acct->account)
-		{
+	for(p_acct = &g_acct_head; p_acct; p_acct = p_acct->next) {	
+		if(conv->account == p_acct->account) {
 			d("found");
-			for(ix = 0; ix < p_acct->conversation_size_current; ix++)
-			{
-				if(!strcmp(conv->name,name))
-				{
+			for(ix = 0; ix < p_acct->conversation_size_current; ix++) {
+				if(!strcmp(conv->name,name)) {
 					return p_acct;
 				}
 			}
 
-			if(p_acct->conversation_size_current >= p_acct->conversation_size_max)
-			{
+			if(p_acct->conversation_size_current >= p_acct->conversation_size_max) {
 				p_acct->conversation_size_max *= 2;
 	
 				p_acct->conversation_list = (PurpleConversation**) realloc(
@@ -1759,8 +1703,7 @@ int parse(char*toParse, char*ret_buffer, char**uid)
 	return RET_ERROR;
 }
 
-void do_exit()
-{
+void do_exit() {
 	// First close all the open handles
 	handle_closeall();
 
@@ -1774,8 +1717,7 @@ void do_exit()
 	exit(0);
 }	
 
-int main()
-{
+int main() {
 	pthread_t plistener;
 
 	int ret;

@@ -13,7 +13,7 @@ I want a light-weight IM client that can send and receive messages. God damn why
 Fuck, I'll just do it myself.
 
 
-This was my attempt at doing just that from about 2006.  I intend to bring it up to the new decade
+This was my attempt at doing just that from about 2007.  I intend to bring it up to the new decade
 and get it running soon
 
 
