@@ -1,0 +1,23 @@
+taim is a client server application with a front end (the client) and a backend (the server)
+
+The frontent is written in perl and the backend is in C and uses the pidgin (formerly gaim) libraries.
+
+session id
+
+Session IDs are determined one of two ways:
+
+Either the XID string of the HTTP header of the phone's request
+or 
+randomly generated every time someone accesses the page
+
+This 
+
+account management
+
+buddy lists
+
+combining sessions for a single account
+The server saves the hashed password sent to the server so that
+if someone logs on with the same username elsewhere, it can be caught and then
+compared against the server hash to see if the password is the same.  This prevents
+multiple logins while maintaining the security of the account.

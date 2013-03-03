@@ -1,0 +1,5 @@
+#!/bin/sh
+acct=$PPID
+echo uid PID"$acct" | nc localhost 19091
+echo user PID"$acct" m8525888l | nc localhost 19091
+echo pass PID"$acct" pass | nc localhost 19091
