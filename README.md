@@ -20,3 +20,7 @@ and get it running soon
 # Installing
 
 You need `libpurple-dev` `libssl-dev`
+
+Try this:
+
+sudo apt-get install libpurple-dev libssl-dev
