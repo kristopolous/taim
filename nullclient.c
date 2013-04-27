@@ -1647,6 +1647,31 @@ void do_exit() {
   exit(0);
 }	
 
+static void signed_on(PurpleConnection *gc) {
+  PurpleAccount *account = purple_connection_get_account(gc);
+  printf("Account connected: \"%s\" (%s)\n", purple_account_get_username(account), purple_account_get_protocol_id(account));
+}
+
+static void received_im_msg(PurpleAccount *account, char *sender, char *message,
+                              PurpleConversation *conv, PurpleMessageFlags flags) {
+
+  if (conv==NULL) {
+    conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, sender);
+  }
+
+  printf("(%s) %s (%s): %s\n", purple_utf8_strftime("%H:%M:%S", NULL), sender, purple_conversation_get_name(conv), message);
+}
+
+static void connect_to_signals(void) {
+  static int handle;
+
+  purple_signal_connect(purple_connections_get_handle(), "signed-on", &handle,
+        PURPLE_CALLBACK(signed_on), NULL);
+
+  purple_signal_connect(purple_conversations_get_handle(), "received-im-msg", &handle,
+        PURPLE_CALLBACK(received_im_msg), NULL);
+}
+
 int main() {
   pthread_t plistener;
 
@@ -1663,15 +1688,16 @@ int main() {
   g_session = (taim_session*)malloc(sizeof(taim_session));
   memset(g_session, 0, sizeof(taim_session));
 
-  pthread_mutex_init(&g_mutex_init, NULL);
-  pthread_mutex_lock(&g_mutex_init);
+  //pthread_mutex_init(&g_mutex_init, NULL);
+  //pthread_mutex_lock(&g_mutex_init);
 
   ret = pthread_create(&plistener, 0, taim_server, 0);
 
   pthread_detach(plistener);
 
   init_libpurple();
-  pthread_mutex_lock(&g_mutex_init);
+  connect_to_signals();
+  //pthread_mutex_lock(&g_mutex_init);
   g_main_loop_run(loop);
   return 0;
 } 
