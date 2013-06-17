@@ -2,7 +2,7 @@
 #-------------------------------------
 # t - apache front end script for taim
 # 	(C) 2007 Chris McKenzie
-#	http://qaa.ath.cx
+#	http://9ol.es
 #
 # 	All rights reserved.
 #-------------------------------------

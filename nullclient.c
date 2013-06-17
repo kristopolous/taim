@@ -4,7 +4,7 @@
 //
 // Derivations by Chris McKenzie (2007, 2008)
 //
-// http://qaa.ath.cx/ for more details
+// http://9ol.es/ for more details
 // ************************************
 #define CUSTOM_USER_DIRECTORY  "/dev/null"
 #define CUSTOM_PLUGIN_PATH     ""
